@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Deck Details</h1>
+<div class="card">
+    <div class="card-content">
+        <span class="card-title">{{ deck.name }}</span>
+        <p>brand: {{ deck.brand }}</p>
+        <p>Description: {{ deck.description }}</p>
+        <p>Printing Company: {{ deck.printing_company }}</p>
+    </div>
+    <a href="{% url 'decks_update' deck.id %}">Edit</a>
+    <a href="{% url 'decks_delete' deck.id %}">Delete</a>
+</div>
+
+<div class="col s6">
+    <p>Extra Features</p>
+    <h4>Add Extra Feature</h4>
+    <form method="POST" action="{% url 'add_extra' deck.id %}">
+        {% csrf_token %}
+        {{ extra_form.as_p }}
+        <input type="submit" value="Add Extra" class="btn">
+    </form>
+
+    <table class="striped">
+
+        <tbody>
+
+            {% for extra in deck.extra_set.all %}
+            <tr>
+                <td>{{extra.name}}
+                    <!-- <a href="{% url 'extras_update' extra.id %}">Edit</a>
+                    <a href="{% url 'extras_delete' extra.id %}">Delete</a> -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<hr>
+<div class="row">
+    <div class="col s6">
+        <h3>{{ deck.name }}'s Accessories</h3>
+        {% if deck.accessories.count %}
+        {% for acc in deck.accessories.all %}
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    <p>{{ acc.name }}</p>
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h5>No Accessories</h5>
+        {% endif %}
+    </div>
+    <!-- Available toys will come after this line -->
+    <div class="col s6">
+        <h3>Available Accessories</h3>
+        {% if accessories.count %}
+        {% for acc in accessories.all %}
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    <p>{{ acc.name }}</p>
+                </span>
+            </div>
+            <div class="card-action">
+                <form action="{% url 'assoc_acc' deck.id acc.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Add</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h5>{{deck.name}} Already Has All Available Accessories</h5>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
